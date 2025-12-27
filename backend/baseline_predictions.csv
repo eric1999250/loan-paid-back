@@ -1,0 +1,6 @@
+Applicant,Income (RWF),Loan (RWF),Credit Score,DTI Ratio,Interest Rate,Prediction,Confidence,Expected
+Excellent Applicant,"10,000,000","2,000,000",780,20.0%,7.0%,APPROVED,97.8%,APPROVED
+Good Applicant,"6,000,000","1,500,000",700,35.0%,9.5%,APPROVED,75.1%,APPROVED
+Medium Risk Applicant,"4,000,000","2,500,000",620,50.0%,13.0%,APPROVED,55.1%,UNCERTAIN
+High Risk Applicant,"2,500,000","3,000,000",500,75.0%,16.5%,REJECTED,43.1%,REJECTED
+Bad Applicant,"1,500,000","5,000,000",400,90.0%,20.0%,REJECTED,43.1%,REJECTED

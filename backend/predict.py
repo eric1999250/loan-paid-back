@@ -14,10 +14,10 @@ try:
     scaler = joblib.load('scaler.pkl')
     label_encoders = joblib.load('label_encoders.pkl')
     feature_names = joblib.load('feature_names.pkl')
-    print(" All files loaded successfully!")
-    print(f" Expected features: {feature_names}")
+    print("✓ All files loaded successfully!")
+    print(f"✓ Expected features: {feature_names}")
 except Exception as e:
-    print(f" Error loading files: {e}")
+    print(f"✗ Error loading files: {e}")
     print("Make sure you have run the training script first!")
     exit()
 
@@ -58,11 +58,11 @@ def predict_loan_approval(
     marital_status : str
         Marital status ('Single', 'Married', 'Divorced', 'Widowed')
     education_level : str
-        Education level ('High School', 'Bachelor', 'Master', 'PhD')
+        Education level ("Bachelor's", "Master's", 'High School', 'PhD', 'Other')
     employment_status : str
-        Employment status ('Employed', 'Self-Employed', 'Unemployed')
+        Employment status ('Employed', 'Self-employed', 'Unemployed', 'Student', 'Retired')
     loan_purpose : str
-        Purpose of loan ('Personal', 'Education', 'Home', 'Auto', 'Business')
+        Purpose of loan ('Business', 'Car', 'Debt consolidation', 'Education', 'Home', 'Medical', 'Other', 'Vacation')
     grade_subgrade : str
         Loan grade (e.g., 'A1', 'A2', 'B1', 'B2', 'C1', etc.)
     
@@ -96,7 +96,7 @@ def predict_loan_approval(
             try:
                 test_data[col] = le.transform(test_data[col])
             except ValueError as e:
-                print(f" Warning: Unknown value for {col}: {test_data[col].values[0]}")
+                print(f"⚠ Warning: Unknown value for {col}: {test_data[col].values[0]}")
                 print(f"   Known values: {list(le.classes_)}")
                 # Use the most common class as fallback
                 test_data[col] = 0
@@ -112,7 +112,7 @@ def predict_loan_approval(
     prediction_proba = model.predict_proba(test_data_scaled)[0]
     
     result = {
-        'prediction': 'APPROVED ' if prediction == 1 else 'REJECTED ',
+        'prediction': 'APPROVED ✓' if prediction == 1 else 'REJECTED ✗',
         'prediction_value': int(prediction),
         'approval_probability': float(prediction_proba[1]),
         'rejection_probability': float(prediction_proba[0])
@@ -128,8 +128,8 @@ print("\n" + "="*60)
 print("LOAN PREDICTION EXAMPLES")
 print("="*60)
 
-# Example 1: High-quality applicant (should be APPROVED)
-print("\n Example 1: High-Quality Applicant")
+# Example 1: High-quality applicant (FIXED VALUES)
+print("\n✓ Example 1: High-Quality Applicant")
 print("-" * 60)
 result1 = predict_loan_approval(
     annual_income=85000,
@@ -139,7 +139,7 @@ result1 = predict_loan_approval(
     interest_rate=8.5,
     gender='Male',
     marital_status='Married',
-    education_level='Bachelor',
+    education_level="Bachelor's",  # FIXED: Added apostrophe
     employment_status='Employed',
     loan_purpose='Home',
     grade_subgrade='A1'
@@ -149,8 +149,8 @@ print(f"Prediction: {result1['prediction']}")
 print(f"Approval Probability: {result1['approval_probability']:.2%}")
 print(f"Rejection Probability: {result1['rejection_probability']:.2%}")
 
-# Example 2: Risky applicant (should be REJECTED)
-print("\n Example 2: High-Risk Applicant")
+# Example 2: Risky applicant (FIXED VALUES)
+print("\n✗ Example 2: High-Risk Applicant")
 print("-" * 60)
 result2 = predict_loan_approval(
     annual_income=30000,
@@ -162,7 +162,7 @@ result2 = predict_loan_approval(
     marital_status='Single',
     education_level='High School',
     employment_status='Unemployed',
-    loan_purpose='Personal',
+    loan_purpose='Debt consolidation',  # FIXED: Changed from 'Personal'
     grade_subgrade='D2'
 )
 
@@ -170,8 +170,8 @@ print(f"Prediction: {result2['prediction']}")
 print(f"Approval Probability: {result2['approval_probability']:.2%}")
 print(f"Rejection Probability: {result2['rejection_probability']:.2%}")
 
-# Example 3: Medium-quality applicant
-print("\n Example 3: Medium-Quality Applicant")
+# Example 3: Medium-quality applicant (FIXED VALUES)
+print("\n⚡ Example 3: Medium-Quality Applicant")
 print("-" * 60)
 result3 = predict_loan_approval(
     annual_income=55000,
@@ -181,8 +181,8 @@ result3 = predict_loan_approval(
     interest_rate=12.0,
     gender='Female',
     marital_status='Married',
-    education_level='Master',
-    employment_status='Self-Employed',
+    education_level="Master's",  # FIXED: Added apostrophe
+    employment_status='Self-employed',  # FIXED: Lowercase 'e'
     loan_purpose='Education',
     grade_subgrade='B2'
 )
@@ -211,20 +211,20 @@ def get_user_input():
         loan_amount = float(input("Loan Amount ($): "))
         interest_rate = float(input("Interest Rate (%, e.g., 10.5): "))
         
-        # Categorical features
+        # Categorical features with CORRECT VALUES
         print("\nGender options: Male, Female, Other")
         gender = input("Gender: ").strip()
         
         print("\nMarital Status options: Single, Married, Divorced, Widowed")
         marital_status = input("Marital Status: ").strip()
         
-        print("\nEducation Level options: High School, Bachelor, Master, PhD")
+        print("\nEducation Level options: Bachelor's, Master's, High School, PhD, Other")
         education_level = input("Education Level: ").strip()
         
-        print("\nEmployment Status options: Employed, Self-Employed, Unemployed")
+        print("\nEmployment Status options: Employed, Self-employed, Unemployed, Student, Retired")
         employment_status = input("Employment Status: ").strip()
         
-        print("\nLoan Purpose options: Personal, Education, Home, Auto, Business")
+        print("\nLoan Purpose options: Business, Car, Debt consolidation, Education, Home, Medical, Other, Vacation")
         loan_purpose = input("Loan Purpose: ").strip()
         
         print("\nGrade Subgrade examples: A1, A2, B1, B2, C1, C2, D1, D2, E1, E2")
@@ -248,16 +248,16 @@ def get_user_input():
         print("\n" + "="*60)
         print("PREDICTION RESULT")
         print("="*60)
-        print(f"\n Prediction: {result['prediction']}")
-        print(f" Approval Probability: {result['approval_probability']:.2%}")
-        print(f" Rejection Probability: {result['rejection_probability']:.2%}")
+        print(f"\n✓ Prediction: {result['prediction']}")
+        print(f"✓ Approval Probability: {result['approval_probability']:.2%}")
+        print(f"✓ Rejection Probability: {result['rejection_probability']:.2%}")
         print("="*60)
         
     except ValueError as e:
-        print(f"\n Invalid input: {e}")
+        print(f"\n✗ Invalid input: {e}")
         print("Please enter valid numeric values.")
     except Exception as e:
-        print(f"\n Error: {e}")
+        print(f"\n✗ Error: {e}")
 
 # Uncomment to enable interactive mode
 # get_user_input()
@@ -270,24 +270,13 @@ def batch_predict(csv_file):
     """
     Predict loan approvals for multiple applicants from CSV
     
-    CSV should contain columns for all 11 features:
-    - annual_income
-    - debt_to_income_ratio
-    - credit_score
-    - loan_amount
-    - interest_rate
-    - gender
-    - marital_status
-    - education_level
-    - employment_status
-    - loan_purpose
-    - grade_subgrade
+    CSV should contain columns for all 11 features with CORRECT VALUES
     """
     
     try:
         # Load CSV
         df = pd.read_csv(csv_file)
-        print(f" Loaded {len(df)} applicants from {csv_file}")
+        print(f"✓ Loaded {len(df)} applicants from {csv_file}")
         
         # Make predictions
         predictions = []
@@ -317,7 +306,7 @@ def batch_predict(csv_file):
         # Save results
         output_file = csv_file.replace('.csv', '_predictions.csv')
         df.to_csv(output_file, index=False)
-        print(f" Predictions saved to {output_file}")
+        print(f"✓ Predictions saved to {output_file}")
         
         # Summary
         approved = sum(1 for p in predictions if 'APPROVED' in p)
@@ -334,15 +323,15 @@ def batch_predict(csv_file):
         return df
         
     except FileNotFoundError:
-        print(f" File not found: {csv_file}")
+        print(f"✗ File not found: {csv_file}")
     except KeyError as e:
-        print(f" Missing required column: {e}")
+        print(f"✗ Missing required column: {e}")
         print(f"Required columns: {feature_names}")
     except Exception as e:
-        print(f" Error: {e}")
+        print(f"✗ Error: {e}")
 
 # Example: Uncomment to predict from CSV
 # batch_predict('new_applicants.csv')
 
-print("\n Prediction system ready!")
+print("\n✓ Prediction system ready!")
 print("You can now use predict_loan_approval() function with all 11 features.")
